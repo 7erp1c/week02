@@ -8,4 +8,4 @@ export type RequestWithPostsPOST<T> = Request<{},{},T>
 export type RequestWithDelete<T> = Request<T>
 
 
-//export type RequestWithPut<T,B> = Request<T,{},B>
+export type RequestWithPut<T,B> = Request<T,{},B>

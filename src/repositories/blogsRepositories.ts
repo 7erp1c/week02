@@ -1,7 +1,5 @@
 import {getBlogsView} from "../model/blogsType/getBlogsView";
 import {dbBlogs} from "../db/dbBlogs";
-import {blogsCreateAndPutModel} from "../typeForReqRes/blogsCreateAndPutModel";
-import {blogsView} from "../model/blogsType/blogsView";
 
 export const blogsRepositories = {
 //get(/)
@@ -34,13 +32,12 @@ export const blogsRepositories = {
     updateBlogs(id: string, name: string, description: string, websiteUrl: string) {
         let foundBlogs = dbBlogs.blogs.find(v => v.id === id);
 
-
         if (foundBlogs) {
-
+         console.log(foundBlogs)
             foundBlogs.name = name;
             foundBlogs.description = description;
             foundBlogs.websiteUrl = websiteUrl;
-
+         console.log(foundBlogs)
             return true;
         } else {
             return false

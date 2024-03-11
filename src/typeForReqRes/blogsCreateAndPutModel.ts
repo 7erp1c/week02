@@ -7,3 +7,10 @@ export type blogsCreateAndPutModel = {
 export type _delete_all_ ={
     id:string
 }
+
+// export type blogsCreateAndPut = {
+//     id: string,
+//     name: string,
+//     description: string,
+//     websiteUrl: string
+// }

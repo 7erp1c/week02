@@ -33,9 +33,9 @@ blogsRouter.put('/:id', (req: Request, res: Response) => {
     const isUpdateBlogs = blogsRepositories.updateBlogs(req.params.id, req.body.name,req.body.description,req.body.websiteUrl)
 
     if (isUpdateBlogs) {
-        const blogsIdFromDb = blogsRepositories.findBlogsByID(req.params.id)
-        //console.log(blogsIdFromDb);
-        res.status(204).send(blogsIdFromDb)
+        const foundBlogs = blogsRepositories.findBlogsByID(req.params.id)
+        console.log(foundBlogs);
+        res.send(foundBlogs)
         return
     } else {
         res.send(404)

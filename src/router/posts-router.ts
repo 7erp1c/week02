@@ -1,62 +1,45 @@
 import {Request, Response, Router} from "express";
 import {dbPosts} from "../db/dbPosts";
 import {RequestWithDelete, RequestWithPostsPOST} from "../typeForReqRes/helperTypeForReq";
-import {getPostsView} from "../model/postsType/getPostsView";
 import {postsCreateAndPutModel} from "../typeForReqRes/postsCreateAndPutModel";
 import {_delete_all_} from "../typeForReqRes/blogsCreateAndPutModel";
+import {postsRepositories} from "../repositories/postsRepositories";
+import {blogsRepositories} from "../repositories/blogsRepositories";
 
 
 export const postsRouter = Router({})
 postsRouter.get('/', (req: Request, res: Response) => {
-    res
-        .status(200)
-        .json(dbPosts.posts)
+    const foundFullPosts = postsRepositories.findFullPosts()
+    res.send(foundFullPosts)
 })
 
 postsRouter.post('/', (req: RequestWithPostsPOST<postsCreateAndPutModel>, res: Response) => {
-    const {title, shortDescription, content, blogId,blogName} = req.body
-
-
-    let newPosts = {
-        id: (+(new Date()) + Math.random()).toString(),
-        title: title,
-        shortDescription: shortDescription,
-        content: content,
-        blogId: blogId,
-        blogName: blogName
-
-    };
-    dbPosts.posts.push(newPosts)
-
-    res.status(201).send(newPosts)
+    const rB = req.body
+    const newPostsFromRep = postsRepositories.createPosts(rB.title,rB.shortDescription,rB.content,rB.blogId,rB.blogName)
+    res.status(201).send(newPostsFromRep)
 })
 
 
 postsRouter.get('/:id', (req: Request, res: Response) => {
-
-
-    const foundBlogs = dbPosts.posts.find(c => c.id === req.body.id);
-    if (!foundBlogs) {
+    const foundPostsFromRep = postsRepositories.findPostsByID(req.params.id)
+    if (!foundPostsFromRep) {
         res.sendStatus(404)
         return;
     }
-    res.json(getPostsView(foundBlogs))
+    res.json(foundPostsFromRep)
         .send(200)
 })
 
 
 postsRouter.put('/:id', (req: Request, res: Response) => {
-    const {id, title, shortDescription, content, blogId, blogName} = req.body
+    const rB = req.body
+    const isUpdatePosts = postsRepositories.updatePosts(req.params.id,rB.title,rB.shortDescription,rB.content,rB.blogId,rB.blogName)
 
-    const foundPosts = dbPosts.posts.find(v => v.id === id);
+    if (isUpdatePosts) {
+        const foundPosts = postsRepositories.findPostsByID(req.params.id)
 
-    if (foundPosts) {
-        foundPosts.title = title;
-        foundPosts.shortDescription = shortDescription;
-        foundPosts.content = content;
-        foundPosts.blogId = blogId;
-        foundPosts.blogName = blogName;
-        res.status(204).send(foundPosts)
+        res.send(foundPosts)
+        return
     } else {
         res.send(404)
     }
@@ -65,13 +48,10 @@ postsRouter.put('/:id', (req: Request, res: Response) => {
 
 postsRouter.delete('/:id', (req: RequestWithDelete<_delete_all_>, res: Response) => {
 
-    const searchPosts = dbPosts.posts.find((p => p.id === req.params.id))
-    if (!searchPosts) {
-        return res.sendStatus(404)//Not Found
+    const isDelete = postsRepositories.deletePosts(req.params.id)
+    if (isDelete) {
+        res.sendStatus(204)//Not Found
+    } else{
+        res.sendStatus(404)
     }
-
-    dbPosts.posts = dbPosts.posts
-        .filter(c => c.id !== req.params.id);//переприсваиваем значение с помощью филтрации
-
-    return res.sendStatus(204)//no content
 })
