@@ -1,10 +1,8 @@
 import {Request, Response, Router} from "express";
-import {dbPosts} from "../db/dbPosts";
 import {RequestWithDelete, RequestWithPostsPOST} from "../typeForReqRes/helperTypeForReq";
 import {postsCreateAndPutModel} from "../typeForReqRes/postsCreateAndPutModel";
 import {_delete_all_} from "../typeForReqRes/blogsCreateAndPutModel";
 import {postsRepositories} from "../repositories/postsRepositories";
-import {blogsRepositories} from "../repositories/blogsRepositories";
 
 
 export const postsRouter = Router({})
@@ -15,7 +13,8 @@ postsRouter.get('/', (req: Request, res: Response) => {
 
 postsRouter.post('/', (req: RequestWithPostsPOST<postsCreateAndPutModel>, res: Response) => {
     const rB = req.body
-    const newPostsFromRep = postsRepositories.createPosts(rB.title,rB.shortDescription,rB.content,rB.blogId,rB.blogName)
+    const newPostsFromRep = postsRepositories
+        .createPosts("string",rB.title,rB.shortDescription,rB.content,rB.blogId,rB.blogName)
     res.status(201).send(newPostsFromRep)
 })
 

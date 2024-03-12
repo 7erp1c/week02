@@ -1,6 +1,9 @@
 import { dbPosts } from "../db/dbPosts";
-import { getPostsView } from "../model/postsType/getPostsView";
-import {postsView} from "../model/postsType/postsView";
+import {blogsRepositories} from "./blogsRepositories";
+import {dbBlogs} from "../db/dbBlogs";
+
+
+
 
 export const postsRepositories = {
     //get(/)
@@ -8,15 +11,18 @@ export const postsRepositories = {
         return dbPosts.posts
     },
 //post(/)
-    createPosts(title: string, shortDescription: string, content: string, blogId:string,blogName:string) {
+    createPosts(id:string, title: string, shortDescription: string, content: string, blogId:string,blogName:string) {
+        let getNameByID = dbBlogs.blogs
+            .filter(b=> b.id ===  blogId)
+            .map(n => n.name).toString()
 
         let newPosts = {
-            id: (+(new Date()) + Math.random()).toString(),
+            id: (+new Date()).toString(),
             title: title,
             shortDescription: shortDescription,
             content: content,
             blogId: blogId,
-            blogName: blogName
+            blogName: getNameByID
 
         };
         dbPosts.posts.push(newPosts)
@@ -34,13 +40,15 @@ export const postsRepositories = {
 //put(/id)
     updatePosts(id: string, title: string, shortDescription: string, content: string, blogId:string,blogName:string) {
         let foundPosts = dbPosts.posts.find(v => v.id === id);
-
+        let getNameByID = dbBlogs.blogs
+            .filter(b=> b.id ===  blogId)
+            .map(n => n.name).toString()
         if (foundPosts) {
             foundPosts.title = title;
             foundPosts.shortDescription = shortDescription;
             foundPosts.content = content;
             foundPosts.blogId = blogId;
-            foundPosts.blogName = blogName;
+            foundPosts.blogName = getNameByID;
             return true;
             } else {
             return false
