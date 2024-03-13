@@ -1,9 +1,14 @@
 import {Request, Response, Router} from "express";
-import {dbBlogs} from "../db/dbBlogs";
 import {_delete_all_, blogsCreateAndPutModel} from "../typeForReqRes/blogsCreateAndPutModel";
 import {RequestWithBlogsPOST, RequestWithDelete} from "../typeForReqRes/helperTypeForReq";
 import {getBlogsView} from "../model/blogsType/getBlogsView";
 import {blogsRepositories} from "../repositories/blogsRepositories";
+import {authGuardMiddleware} from "../middleware/authGuardMiddleware";
+
+
+import {errorsValidation} from "../middleware/errorsValidation";
+import {blogsValidation} from "../middleware/inputValidationMiddleware";
+
 
 export const blogsRouter = Router ({})
 
@@ -12,7 +17,8 @@ blogsRouter.get('/', (req: Request, res: Response) => {
     res.send(foundFullBlogs)
 })
 
-blogsRouter.post('/', (req: RequestWithBlogsPOST<blogsCreateAndPutModel>, res: Response) => {
+blogsRouter.post('/',authGuardMiddleware,blogsValidation,errorsValidation,
+    (req: RequestWithBlogsPOST<blogsCreateAndPutModel>, res: Response) => {
     const newBlogsFromRep = blogsRepositories.createBlogs(req.body.name,req.body.description,req.body.websiteUrl)
     res.status(201).send(newBlogsFromRep)
 })
@@ -29,7 +35,7 @@ blogsRouter.get('/:id', (req: Request, res: Response) => {
 })
 
 
-blogsRouter.put('/:id', (req: Request, res: Response) => {
+blogsRouter.put('/:id',authGuardMiddleware,blogsValidation,errorsValidation, (req: Request, res: Response) => {
     const isUpdateBlogs = blogsRepositories.updateBlogs(req.params.id, req.body.name,req.body.description,req.body.websiteUrl)
 
     if (isUpdateBlogs) {
@@ -43,7 +49,7 @@ blogsRouter.put('/:id', (req: Request, res: Response) => {
 })
 
 
-blogsRouter.delete('/:id', (req: RequestWithDelete<_delete_all_>, res: Response) => {
+blogsRouter.delete('/:id',authGuardMiddleware, (req: RequestWithDelete<_delete_all_>, res: Response) => {
 
     const isDelete = blogsRepositories.deleteBlogs(req.params.id)
     if (isDelete) {
