@@ -24,8 +24,13 @@ postsRouter.post('/', authGuardMiddleware, postsValidation, errorsValidation, (r
 
 postsRouter.get('/:id', (req: Request, res: Response) => {
     const foundPostsFromRep = postsRepositories.findPostsByID(req.params.id)
+
     if (!foundPostsFromRep) {
         res.sendStatus(404)
+        return;
+    }
+    if(Object.keys(foundPostsFromRep).length === 0){
+        res.sendStatus(204)
         return;
     }
     res.json(foundPostsFromRep)
