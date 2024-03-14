@@ -4,10 +4,9 @@ import {RequestWithBlogsPOST, RequestWithDelete} from "../typeForReqRes/helperTy
 import {getBlogsView} from "../model/blogsType/getBlogsView";
 import {blogsRepositories} from "../repositories/blogsRepositories";
 import {authGuardMiddleware} from "../middleware/authGuardMiddleware";
-
-
 import {errorsValidation} from "../middleware/errorsValidation";
 import {blogsValidation} from "../middleware/inputValidationMiddleware";
+import {dbBlogs} from "../db/dbBlogs";
 
 
 export const blogsRouter = Router ({})
@@ -38,6 +37,17 @@ blogsRouter.get('/:id', (req: Request, res: Response) => {
 blogsRouter.put('/:id',authGuardMiddleware,blogsValidation,errorsValidation, (req: Request, res: Response) => {
     const isUpdateBlogs = blogsRepositories.updateBlogs(req.params.id, req.body.name,req.body.description,req.body.websiteUrl)
 
+    const bBlogsId = req.params.id;
+    const blogsIndexId = dbBlogs.blogs.findIndex(p => p.id === bBlogsId);
+    if(blogsIndexId === -1){
+        res.send(404);
+        return;
+    }
+
+    if(Object.keys(isUpdateBlogs).length === 0){
+        res.sendStatus(204)
+        return;
+    }
 
     if (isUpdateBlogs) {
         const foundBlogs = blogsRepositories.findBlogsByID(req.params.id)
@@ -47,10 +57,7 @@ blogsRouter.put('/:id',authGuardMiddleware,blogsValidation,errorsValidation, (re
     } else {
         res.send(404)
     }
-    if(Object.keys(isUpdateBlogs).length === 0){
-        res.sendStatus(204)
-        return;
-    }
+
 })
 
 

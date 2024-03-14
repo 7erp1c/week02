@@ -42,7 +42,7 @@ postsRouter.put('/:id', authGuardMiddleware, postsValidation, errorsValidation, 
 
     const postId = req.params.id;
     const postIndex = dbPosts.posts.findIndex(p => p.id === postId);
-    if(!postIndex){
+    if(postIndex === -1){
         res.send(404);
         return;
     }
