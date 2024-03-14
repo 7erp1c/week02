@@ -38,6 +38,10 @@ blogsRouter.get('/:id', (req: Request, res: Response) => {
 blogsRouter.put('/:id',authGuardMiddleware,blogsValidation,errorsValidation, (req: Request, res: Response) => {
     const isUpdateBlogs = blogsRepositories.updateBlogs(req.params.id, req.body.name,req.body.description,req.body.websiteUrl)
 
+    if(Object.keys(isUpdateBlogs).length === 0){
+        res.sendStatus(204)
+        return;
+    }
     if (isUpdateBlogs) {
         const foundBlogs = blogsRepositories.findBlogsByID(req.params.id)
         console.log(foundBlogs);
