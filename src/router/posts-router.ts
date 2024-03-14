@@ -17,7 +17,7 @@ postsRouter.get('/', (req: Request, res: Response) => {
 postsRouter.post('/', authGuardMiddleware, postsValidation, errorsValidation, (req: RequestWithPostsPOST<postsCreateAndPutModel>, res: Response) => {
     const rB = req.body
     const newPostsFromRep = postsRepositories
-        .createPosts("string", rB.title, rB.shortDescription, rB.content, rB.blogId, rB.blogName)
+        .createPosts("string", rB.title, rB.shortDescription, rB.content, rB.blogId, rB.blogName)//как сократить
     res.status(201).send(newPostsFromRep)
 })
 
