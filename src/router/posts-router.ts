@@ -38,10 +38,9 @@ postsRouter.get('/:id', (req: Request, res: Response) => {
 postsRouter.put('/:id', authGuardMiddleware, postsValidation, errorsValidation, (req: Request, res: Response) => {
     const rB = req.body
     const isUpdatePosts = postsRepositories.updatePosts(req.params.id, rB.title, rB.shortDescription, rB.content, rB.blogId, rB.blogName)
-    if(Object.keys(isUpdatePosts).length === 0){
-        res.sendStatus(204)
-        return;
-    }
+
+
+
     if (isUpdatePosts) {
         const foundPosts = postsRepositories.findPostsByID(req.params.id)
 
@@ -49,6 +48,10 @@ postsRouter.put('/:id', authGuardMiddleware, postsValidation, errorsValidation, 
         return
     } else {
         res.send(404)
+    }
+    if(Object.keys(isUpdatePosts).length === 0){
+        res.sendStatus(204)
+        return;
     }
 })
 
