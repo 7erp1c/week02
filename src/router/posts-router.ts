@@ -6,6 +6,7 @@ import {postsRepositories} from "../repositories/postsRepositories";
 import {authGuardMiddleware} from "../middleware/authGuardMiddleware";
 import {postsValidation} from "../middleware/inputValidationMiddleware";
 import {errorsValidation} from "../middleware/errorsValidation";
+import {dbPosts} from "../db/dbPosts";
 
 
 export const postsRouter = Router({})
@@ -39,8 +40,16 @@ postsRouter.put('/:id', authGuardMiddleware, postsValidation, errorsValidation, 
     const rB = req.body
     const isUpdatePosts = postsRepositories.updatePosts(req.params.id, rB.title, rB.shortDescription, rB.content, rB.blogId, rB.blogName)
 
-
-
+    const postId = req.params.id;
+    const postIndex = dbPosts.posts.findIndex(p => p.id === postId);
+    if(!postIndex){
+        res.send(404);
+        return;
+    }
+    if(Object.keys(isUpdatePosts).length === 0){
+        res.sendStatus(204)
+        return;
+    }
     if (isUpdatePosts) {
         const foundPosts = postsRepositories.findPostsByID(req.params.id)
 
@@ -49,10 +58,7 @@ postsRouter.put('/:id', authGuardMiddleware, postsValidation, errorsValidation, 
     } else {
         res.send(404)
     }
-    if(Object.keys(isUpdatePosts).length === 0){
-        res.sendStatus(204)
-        return;
-    }
+
 })
 
 
