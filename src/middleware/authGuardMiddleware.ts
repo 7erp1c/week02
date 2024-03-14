@@ -6,7 +6,7 @@ export const authGuardMiddleware = (req: Request,res: Response,next: NextFunctio
     const authHeader: string = req.headers.authorization;
     const oneAuthHeader = authHeader.split(' ').splice(0,1).toString()
 
-    if (!authHeader) {
+    if (!authHeader??undefined) {
        res.status(401).json({ error: 'Unauthorized' });
     }
     const credentials = Buffer.from(authHeader.split(' ')[1], 'base64').toString().split(':');
