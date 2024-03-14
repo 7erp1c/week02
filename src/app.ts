@@ -6,8 +6,8 @@ import {dbBlogs} from "./db/dbBlogs";
 export const app = express()
 
 app.use(express.json())
-app.use('/api/blogs', blogsRouter)
-app.use('/api/posts', postsRouter)
+app.use('/blogs', blogsRouter)
+app.use('/posts', postsRouter)
 
 app.get('/', (req: Request, res: Response) => {
     res
@@ -15,7 +15,7 @@ app.get('/', (req: Request, res: Response) => {
         .json({x: "x1"})
 
 })
-app.delete('/api/testing/all-data', (req, res) => {
+app.delete('/testing/all-data', (req, res) => {
     dbBlogs.blogs = [];
     dbPosts.posts = [];
     res.sendStatus(204);

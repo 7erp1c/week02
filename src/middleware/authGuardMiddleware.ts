@@ -4,6 +4,6 @@ export const authGuardMiddleware = (req: Request,res: Response,next: NextFunctio
     if(req.query.login === "admin" && req.query.password === "qwerty" ){
         next()
     } else {
-        res.send(401)
+        res.status(401).send('Unauthorized');
     }
 }
